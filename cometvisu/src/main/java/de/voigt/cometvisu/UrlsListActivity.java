@@ -24,23 +24,19 @@ import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
-    final Activity activity = this;
+    private final Activity activity = this;
 
-    public static final String VISU_KEY = "VISU_URLS";
+    private static final String VISU_KEY = "VISU_URLS";
 
-  /*
-    final Button addButton = (Button)findViewById(R.id.addButton);
-    final Button backButton = (Button)findViewById(R.id.backButton);
-*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.urls_view);
 
-
         final ListView lv = (ListView)findViewById(R.id.urlListView);
+        final Button addButton = (Button)findViewById(R.id.addButton);
+        final Button backButton = (Button)findViewById(R.id.backButton);
 
-/*
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,8 +45,7 @@ public class UrlsListActivity extends Activity {
                 final EditText input = new EditText(activity);
 
                 new AlertDialog.Builder(activity)
-                        .setTitle("Neue URL eingeben")
-                        .setMessage("http://")
+                        .setTitle("Neue URL")
                         .setView(input)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -66,15 +61,14 @@ public class UrlsListActivity extends Activity {
                         }).show();
                }
         });
-*/
-/*
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-*/
+
 
         reload(lv);
 
@@ -89,7 +83,7 @@ public class UrlsListActivity extends Activity {
 
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        urls.add("my new string"+new Random(10).toString());
+        urls.add("my new string"+String.valueOf(new Random(10)));
         editor.putStringSet(VISU_KEY, urls);
         editor.commit();
 
