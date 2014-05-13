@@ -6,10 +6,12 @@
 
     <ListView
         android:id="@+id/urlListView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Large Text"
-    android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceInverse"
+        style="@android:style/TextAppearance.Inverse"
+        android:choiceMode="singleChoice" />
 
     <LinearLayout
         android:orientation="horizontal"

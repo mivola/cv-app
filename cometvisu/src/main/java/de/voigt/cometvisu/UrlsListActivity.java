@@ -43,6 +43,7 @@ public class UrlsListActivity extends Activity {
 
                 // Set an EditText view to get user input
                 final EditText input = new EditText(activity);
+                input.setText("http://");
 
                 new AlertDialog.Builder(activity)
                         .setTitle("Neue URL")
@@ -50,8 +51,20 @@ public class UrlsListActivity extends Activity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String value = input.getText().toString();
-                                // deal with the editable
-                                Toast.makeText(activity, value, Toast.LENGTH_SHORT);
+
+                                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+                                Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+
+                                SharedPreferences.Editor editor = sharedPref.edit();
+
+                                urls.add(value);
+
+                                editor.putStringSet(VISU_KEY, urls);
+                                editor.commit();
+
+                                reload(lv);
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -80,12 +93,6 @@ public class UrlsListActivity extends Activity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
         Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
-
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        urls.add("my new string"+String.valueOf(new Random(10)));
-        editor.putStringSet(VISU_KEY, urls);
-        editor.commit();
 
         List<String> list = Arrays.asList(urls.toArray(new String[urls.size()]));
 
