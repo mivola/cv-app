@@ -52,7 +52,7 @@ public class UrlsListActivity extends Activity {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String value = input.getText().toString();
 
-                                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
 
                                 Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
 
@@ -90,7 +90,7 @@ public class UrlsListActivity extends Activity {
 
     private void reload(ListView listView){
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
 
         Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
 
