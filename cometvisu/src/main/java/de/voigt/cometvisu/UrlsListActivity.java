@@ -21,18 +21,17 @@ import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
-    private final Activity activity = this;
-
     private static final String VISU_KEY = "VISU_URLS";
+    private final Activity activity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.urls_view);
 
-        final ListView lv = (ListView)findViewById(R.id.urlListView);
-        final Button addButton = (Button)findViewById(R.id.addButton);
-        final Button backButton = (Button)findViewById(R.id.backButton);
+        final ListView lv = (ListView) findViewById(R.id.urlListView);
+        final Button addButton = (Button) findViewById(R.id.addButton);
+        final Button backButton = (Button) findViewById(R.id.backButton);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +59,7 @@ public class UrlsListActivity extends Activity {
                                 // Do nothing.
                             }
                         }).show();
-               }
+            }
         });
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -80,19 +79,20 @@ public class UrlsListActivity extends Activity {
         SharedPreferences sharedPref = getSharedPreferences();
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove(VISU_KEY);
-        editor.commit();
-        Log.i("sharedprefs", "deleting key");
+        boolean deleted = editor.commit();
+        Log.i("sharedprefs", "deleted key: " + deleted);
+
         Set<String> urlsEmpty = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
-        Log.i("sharedprefs", "urls empty? " +urlsEmpty);
+        Log.i("sharedprefs", "urls empty? " + urlsEmpty);
 
         editor.putStringSet(VISU_KEY, urls);
-        Log.i("sharedprefs", "urls to be saved? " +urls);
-        boolean commited = editor.commit();
-        Log.i("sharedprefs", "commit successful? " +commited);
+        Log.i("sharedprefs", "urls to be saved? " + urls);
+        boolean committed = editor.commit();
+        Log.i("sharedprefs", "commit successful? " + committed);
 
     }
 
-    private void reload(ListView listView){
+    private void reload(ListView listView) {
 
         Set<String> urls = loadUrlStringsFromSharedPreferences();
 
