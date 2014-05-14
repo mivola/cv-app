@@ -6,20 +6,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 public class UrlsListActivity extends Activity {
@@ -50,18 +47,9 @@ public class UrlsListActivity extends Activity {
                         .setView(input)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                String value = input.getText().toString();
 
-                                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
-
-                                Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
-
-                                SharedPreferences.Editor editor = sharedPref.edit();
-
-                                urls.add(value);
-
-                                editor.putStringSet(VISU_KEY, urls);
-                                editor.commit();
+                                String newUrl = input.getText().toString();
+                                addUrlToPreferences(newUrl);
 
                                 reload(lv);
 
@@ -82,17 +70,31 @@ public class UrlsListActivity extends Activity {
             }
         });
 
-
         reload(lv);
+    }
 
+    private void addUrlToPreferences(String newUrl) {
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+        urls.add(newUrl);
+
+        SharedPreferences sharedPref = getSharedPreferences();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(VISU_KEY);
+        editor.commit();
+        Log.i("sharedprefs", "deleting key");
+        Set<String> urlsEmpty = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+        Log.i("sharedprefs", "urls empty? " +urlsEmpty);
+
+        editor.putStringSet(VISU_KEY, urls);
+        Log.i("sharedprefs", "urls to be saved? " +urls);
+        boolean commited = editor.commit();
+        Log.i("sharedprefs", "commit successful? " +commited);
 
     }
 
     private void reload(ListView listView){
 
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
-
-        Set<String> urls = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
 
         List<String> list = Arrays.asList(urls.toArray(new String[urls.size()]));
 
@@ -100,6 +102,16 @@ public class UrlsListActivity extends Activity {
 
         listView.setAdapter(adapter);
 
+    }
+
+    private Set<String> loadUrlStringsFromSharedPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences();
+
+        return sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+    }
+
+    private SharedPreferences getSharedPreferences() {
+        return getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
     }
 
 }
