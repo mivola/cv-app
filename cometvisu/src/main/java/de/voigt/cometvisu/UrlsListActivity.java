@@ -82,7 +82,7 @@ public class UrlsListActivity extends Activity {
         boolean deleted = editor.commit();
         Log.i("sharedprefs", "deleted key: " + deleted);
 
-        Set<String> urlsEmpty = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+        Set<String> urlsEmpty = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());   
         Log.i("sharedprefs", "urls empty? " + urlsEmpty);
 
         editor.putStringSet(VISU_KEY, urls);

@@ -2,21 +2,27 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#000000">
 
     <ListView
         android:id="@+id/urlListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceInverse"
-        style="@android:style/TextAppearance.Inverse"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:divider="#ffffff"
+        android:dividerHeight="1dp"
+        android:drawSelectorOnTop="false"
+        android:fastScrollAlwaysVisible="false"
+        android:longClickable="true"
+        android:listSelector="#7b7b7b" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="right">
 
 
         <Button
