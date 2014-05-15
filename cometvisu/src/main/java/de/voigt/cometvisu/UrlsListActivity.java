@@ -34,6 +34,10 @@ public class UrlsListActivity extends Activity {
 //    public static final String DELETE_ENABLED = "deleteEnabled";
     private final Activity activity = this;
 
+    final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
+
+    SimpleAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +46,24 @@ public class UrlsListActivity extends Activity {
         final ListView lv = (ListView) findViewById(R.id.urlListView);
         final Button addButton = (Button) findViewById(R.id.addButton);
         final Button backButton = (Button) findViewById(R.id.backButton);
+
+
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+
+        for (String url : urls){
+            Map<String, Object> urlMap = new HashMap<String, Object>();
+            urlMap.put(URL, url);
+            urlMap.put(CHECKED, false);
+//            urlMap.put(DELETE_ENABLED, true);
+            urlsMap.add(urlMap);
+        }
+
+        adapter = new SimpleAdapter(activity,
+                urlsMap,
+                R.layout.list_single_check,
+                new String[] {URL, CHECKED/*, DELETE_ENABLED*/},
+                new int[] {R.id.urlText, R.id.selectRadioButton/*, R.id.deleteButton*/});
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +82,7 @@ public class UrlsListActivity extends Activity {
                                 String newUrl = input.getText().toString();
                                 addUrlToPreferences(newUrl);
 
-                                reload(lv);
+                                //reload(lv);
 
                             }
                         })
@@ -80,24 +102,6 @@ public class UrlsListActivity extends Activity {
         });
 
         //reload(lv);
-
-        Set<String> urls = loadUrlStringsFromSharedPreferences();
-        final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
-
-
-        for (String url : urls){
-            Map<String, Object> urlMap = new HashMap<String, Object>();
-            urlMap.put(URL, url);
-            urlMap.put(CHECKED, false);
-//            urlMap.put(DELETE_ENABLED, true);
-            urlsMap.add(urlMap);
-        }
-
-        final SimpleAdapter adapter = new SimpleAdapter(activity,
-                urlsMap,
-                R.layout.list_single_check,
-                new String[] {URL, CHECKED/*, DELETE_ENABLED*/},
-                new int[] {R.id.urlText, R.id.selectRadioButton/*, R.id.deleteButton*/});
 
         adapter.setViewBinder(new SimpleAdapter.ViewBinder()
         {
