@@ -31,7 +31,7 @@ public class UrlsListActivity extends Activity {
     private static final String VISU_KEY = "VISU_URLS";
     public static final String URL = "url";
     public static final String CHECKED = "checked";
-//    public static final String DELETE_ENABLED = "deleteEnabled";
+
     private final Activity activity = this;
 
     final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
@@ -51,18 +51,14 @@ public class UrlsListActivity extends Activity {
         Set<String> urls = loadUrlStringsFromSharedPreferences();
 
         for (String url : urls){
-            Map<String, Object> urlMap = new HashMap<String, Object>();
-            urlMap.put(URL, url);
-            urlMap.put(CHECKED, false);
-//            urlMap.put(DELETE_ENABLED, true);
-            urlsMap.add(urlMap);
+            addUrlToMap(url);
         }
 
         adapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,
-                new String[] {URL, CHECKED/*, DELETE_ENABLED*/},
-                new int[] {R.id.urlText, R.id.selectRadioButton/*, R.id.deleteButton*/});
+                new String[] {URL, CHECKED},
+                new int[] {R.id.urlText, R.id.selectRadioButton});
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +79,8 @@ public class UrlsListActivity extends Activity {
                                 addUrlToPreferences(newUrl);
 
                                 //reload(lv);
+                                addUrlToMap(newUrl);
+                                adapter.notifyDataSetChanged();
 
                             }
                         })
@@ -162,6 +160,13 @@ public class UrlsListActivity extends Activity {
             }
         });
 */
+    }
+
+    private void addUrlToMap(String url) {
+        Map<String, Object> urlMap = new HashMap<String, Object>();
+        urlMap.put(URL, url);
+        urlMap.put(CHECKED, false);
+        urlsMap.add(urlMap);
     }
 
     private void addUrlToPreferences(String newUrl) {

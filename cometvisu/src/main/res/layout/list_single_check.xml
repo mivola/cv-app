@@ -23,25 +23,14 @@
     </LinearLayout>
 
     <RadioButton
-        android:layout_height="wrap_content"
         android:id="@+id/selectRadioButton"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:gravity="center_vertical"
         android:focusable="false"
         android:clickable="false"
-        android:layout_marginRight="60dp" />
-
-<!--
-    <ImageButton
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        android:src="@drawable/delete" />
--->
+        android:layout_alignParentEnd="false" />
 
 </RelativeLayout>
