@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -28,8 +29,9 @@ import java.util.Set;
 public class UrlsListActivity extends Activity {
 
     private static final String VISU_KEY = "VISU_URLS";
-    public static final String CHECKED = "checked";
     public static final String URL = "url";
+    public static final String CHECKED = "checked";
+//    public static final String DELETE_ENABLED = "deleteEnabled";
     private final Activity activity = this;
 
     @Override
@@ -78,6 +80,7 @@ public class UrlsListActivity extends Activity {
         });
 
         //reload(lv);
+
         Set<String> urls = loadUrlStringsFromSharedPreferences();
         final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
 
@@ -86,27 +89,30 @@ public class UrlsListActivity extends Activity {
             Map<String, Object> urlMap = new HashMap<String, Object>();
             urlMap.put(URL, url);
             urlMap.put(CHECKED, false);
+//            urlMap.put(DELETE_ENABLED, true);
             urlsMap.add(urlMap);
         }
 
         final SimpleAdapter adapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,
-                new String[] {URL, CHECKED},
-                new int[] {R.id.tv_MainText, R.id.rb_Choice});
+                new String[] {URL, CHECKED/*, DELETE_ENABLED*/},
+                new int[] {R.id.urlText, R.id.selectRadioButton/*, R.id.deleteButton*/});
 
         adapter.setViewBinder(new SimpleAdapter.ViewBinder()
         {
+            @Override
             public boolean setViewValue(View view, Object data, String textRepresentation)
             {
-                if (data == null) //if 2nd line text is null, its textview should be hidden
-                {
+                if (data == null) { //if 2nd line text is null, its textview should be hidden
                     view.setVisibility(View.GONE);
                     return true;
                 }
                 view.setVisibility(View.VISIBLE);
                 return false;
             }
+
+//            final ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
 
         });
 
@@ -116,14 +122,17 @@ public class UrlsListActivity extends Activity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
-                RadioButton rb = (RadioButton) v.findViewById(R.id.rb_Choice);
+                RadioButton rb = (RadioButton) v.findViewById(R.id.selectRadioButton);
                 if (!rb.isChecked()) { //OFF->ON
 
                     for (Map<String, Object> m :urlsMap) {//clean previous selected
                         m.put(CHECKED, false);
+                        //TODO: enable delete button
                     }
 
                     urlsMap.get(arg2).put(CHECKED, true);
+                    //TODO: save selection
+                    //TODO: disable delete button
                     adapter.notifyDataSetChanged();
                 }
             }
