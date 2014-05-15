@@ -8,20 +8,28 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.SimpleAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
     private static final String VISU_KEY = "VISU_URLS";
+    public static final String CHECKED = "checked";
+    public static final String URL = "url";
     private final Activity activity = this;
 
     @Override
@@ -69,7 +77,78 @@ public class UrlsListActivity extends Activity {
             }
         });
 
-        reload(lv);
+        //reload(lv);
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+        final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
+
+
+        for (String url : urls){
+            Map<String, Object> urlMap = new HashMap<String, Object>();
+            urlMap.put(URL, url);
+            urlMap.put(CHECKED, false);
+            urlsMap.add(urlMap);
+        }
+
+        final SimpleAdapter adapter = new SimpleAdapter(activity,
+                urlsMap,
+                R.layout.list_single_check,
+                new String[] {URL, CHECKED},
+                new int[] {R.id.tv_MainText, R.id.rb_Choice});
+
+        adapter.setViewBinder(new SimpleAdapter.ViewBinder()
+        {
+            public boolean setViewValue(View view, Object data, String textRepresentation)
+            {
+                if (data == null) //if 2nd line text is null, its textview should be hidden
+                {
+                    view.setVisibility(View.GONE);
+                    return true;
+                }
+                view.setVisibility(View.VISIBLE);
+                return false;
+            }
+
+        });
+
+
+        // Bind to our new adapter.
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
+                RadioButton rb = (RadioButton) v.findViewById(R.id.rb_Choice);
+                if (!rb.isChecked()) { //OFF->ON
+
+                    for (Map<String, Object> m :urlsMap) {//clean previous selected
+                        m.put(CHECKED, false);
+                    }
+
+                    urlsMap.get(arg2).put(CHECKED, true);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        /*
+        //show result
+        ((Button)activity.findViewById(R.id.Button01)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int r = -1;
+                for (int i = 0; i < urlsMap.size(); i++) //clean previous selected
+                {
+                    HashMap<String, Object> m = urlsMap.get(i);
+                    Boolean x = (Boolean) m.get("checked");
+                    if (x == true)
+                    {
+                        r = i;
+                        break; //break, since it's a single choice list
+                    }
+                }
+                new AlertDialog.Builder(m_this).setMessage("you selected:"+r).show();
+            }
+        });
+*/
     }
 
     private void addUrlToPreferences(String newUrl) {
