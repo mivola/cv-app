@@ -80,7 +80,6 @@ public class UrlsListActivity extends Activity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: set/load selected URL in main activity
                 finish();
             }
         });
@@ -101,7 +100,6 @@ public class UrlsListActivity extends Activity {
         });
 
 
-        // Bind to our new adapter.
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -154,27 +152,6 @@ public class UrlsListActivity extends Activity {
                 return true;
             }
         });
-
-        /*
-        //show result
-        ((Button)activity.findViewById(R.id.Button01)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int r = -1;
-                for (int i = 0; i < urlsMap.size(); i++) //clean previous selected
-                {
-                    HashMap<String, Object> m = urlsMap.get(i);
-                    Boolean x = (Boolean) m.get("checked");
-                    if (x == true)
-                    {
-                        r = i;
-                        break; //break, since it's a single choice list
-                    }
-                }
-                new AlertDialog.Builder(m_this).setMessage("you selected:"+r).show();
-            }
-        });
-*/
     }
 
     private void addUrlToPreferences(String newUrl) {
@@ -194,17 +171,18 @@ public class UrlsListActivity extends Activity {
     private void saveUrlsToPreferences(Set<String> urls) {
         SharedPreferences sharedPref = getSharedPreferences();
         SharedPreferences.Editor editor = sharedPref.edit();
+        //for some strange reasons, we need to remove the key first; otherwise it wont be saved (after restart of app)
         editor.remove(VISU_URL_KEY);
         boolean deleted = editor.commit();
-        Log.i("sharedprefs", "deleted key: " + deleted);
+        Log.d("sharedprefs", "deleted key: " + deleted);
 
         Set<String> urlsEmpty = sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
-        Log.i("sharedprefs", "urls empty? " + urlsEmpty);
+        Log.d("sharedprefs", "urls empty? " + urlsEmpty);
 
         editor.putStringSet(VISU_URL_KEY, urls);
-        Log.i("sharedprefs", "urls to be saved? " + urls);
+        Log.d("sharedprefs", "urls to be saved? " + urls);
         boolean committed = editor.commit();
-        Log.i("sharedprefs", "commit successful? " + committed);
+        Log.d("sharedprefs", "commit successful? " + committed);
 
         //set local map
         updateLocalUrlMapAndNotifyAdapter(urls);

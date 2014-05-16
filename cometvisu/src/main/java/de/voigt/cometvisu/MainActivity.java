@@ -34,13 +34,18 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        pd = new ProgressDialog(activity);
+        pd.setMessage(LOADING_MESSAGE);
+        pd.setCancelable(true);
+        pd.setIndeterminate(true);
+
         setOrientation();
 
         reloadBtn = (ImageButton) findViewById(R.id.reloadBtn);
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pd = ProgressDialog.show(activity, "", LOADING_MESSAGE, true);
+                pd.show();
                 setOrientation();
                 loadSelectedURL();
             }
@@ -61,14 +66,12 @@ public class MainActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (pd.isShowing() && pd != null) {
-                    //TODO: set timeout to enable reload/settings button
                     pd.dismiss();
                 }
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
         loadSelectedURL();
-
     }
 
     @Override
@@ -80,10 +83,10 @@ public class MainActivity extends Activity {
     }
 
     private void loadSelectedURL() {
-        pd = ProgressDialog.show(this, "", LOADING_MESSAGE, true);
         String currentlySelectedUrl= getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getString(UrlsListActivity.VISU_SELECTED_URL_KEY, DEFAULT_VISU_URL);
         if (!visuUrl.equals(currentlySelectedUrl)) {
             visuUrl=currentlySelectedUrl;
+            pd.show();
             webView.loadUrl(visuUrl);
         }
     }
