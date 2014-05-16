@@ -45,8 +45,8 @@ public class MainActivity extends Activity {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pd.show();
                 setOrientation();
+                visuUrl = "";
                 loadSelectedURL();
             }
         });
