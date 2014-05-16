@@ -25,7 +25,7 @@ import java.util.Set;
 public class UrlsListActivity extends Activity {
 
     private static final String VISU_URL_KEY = "VISU_URLS";
-    private static final String VISU_SELECTED_URL_KEY = "VISU_SELECTED_URL";
+    static final String VISU_SELECTED_URL_KEY = "VISU_SELECTED_URL";
     public static final String URL = "url";
     public static final String CHECKED = "checked";
 

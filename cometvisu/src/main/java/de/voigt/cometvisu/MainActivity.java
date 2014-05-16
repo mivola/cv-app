@@ -15,11 +15,13 @@ import android.widget.ImageButton;
 
 public class MainActivity extends Activity {
 
-    public static final String LOADING_MESSAGE = "Lade Seite...";
+    private static final String LOADING_MESSAGE = "Lade Seite...";
 
-    public static final String VISU_URL = "http://wiregate302/visu-svn";
+    private static final String DEFAULT_VISU_URL = "http://wiregate302/visu-svn";
 
-    final Activity activity = this;
+    private String visuUrl = "";
+
+    private final Activity activity = this;
 
     private WebView webView;
 
@@ -36,41 +38,54 @@ public class MainActivity extends Activity {
 
         reloadBtn = (ImageButton) findViewById(R.id.reloadBtn);
         reloadBtn.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 pd = ProgressDialog.show(activity, "", LOADING_MESSAGE,true);
-                 setOrientation();
-                 webView.loadUrl(VISU_URL);
-             }
+            @Override
+            public void onClick(View view) {
+                pd = ProgressDialog.show(activity, "", LOADING_MESSAGE, true);
+                setOrientation();
+                loadSelectedURL();
+            }
         });
 
         reloadBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-
                 Intent myIntent = new Intent(activity, UrlsListActivity.class);
                 activity.startActivity(myIntent);
 
                 return true;
-
             }
         });
-
-        pd = ProgressDialog.show(this, "", LOADING_MESSAGE, true);
 
         webView = (WebView) findViewById(R.id.webView1);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if(pd.isShowing()&&pd!=null)
-                {
+                if (pd.isShowing() && pd != null) {
+                    //TODO: set timeout to enable reload/settings button
                     pd.dismiss();
                 }
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(VISU_URL);
+        loadSelectedURL();
 
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            loadSelectedURL();
+        }
+    }
+
+    private void loadSelectedURL() {
+        pd = ProgressDialog.show(this, "", LOADING_MESSAGE, true);
+        String currentlySelectedUrl= getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getString(UrlsListActivity.VISU_SELECTED_URL_KEY, DEFAULT_VISU_URL);
+        if (!visuUrl.equals(currentlySelectedUrl)) {
+            visuUrl=currentlySelectedUrl;
+            webView.loadUrl(visuUrl);
+        }
     }
 
     private void setOrientation() {
