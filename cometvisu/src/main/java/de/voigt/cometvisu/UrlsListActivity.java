@@ -54,7 +54,6 @@ public class UrlsListActivity extends Activity {
         Set<String> urls = loadUrlStringsFromSharedPreferences();
         updateLocalUrlMapAndNotifyAdapter(urls);
 
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,8 +113,11 @@ public class UrlsListActivity extends Activity {
                         m.put(CHECKED, false);
                     }
 
+                    SharedPreferences.Editor editor = getSharedPreferences().edit();
+                    editor.putString(VISU_SELECTED_URL_KEY, (String) urlsMap.get(position).get(URL));
+                    editor.commit();
+
                     urlsMap.get(position).put(CHECKED, true);
-                    //TODO: save selection
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -210,17 +212,16 @@ public class UrlsListActivity extends Activity {
 
     private void updateLocalUrlMapAndNotifyAdapter(Set<String> urls) {
         urlsMap.clear();
+        String selectedUrl = getSharedPreferences().getString(VISU_SELECTED_URL_KEY,"");
         for (String url : urls){
-            addUrlToMap(url);
+            boolean checked = (selectedUrl!=null && selectedUrl.equals(url) ? true : false);
+
+            Map<String, Object> urlMap = new HashMap<String, Object>();
+            urlMap.put(URL, url);
+            urlMap.put(CHECKED, checked);
+            urlsMap.add(urlMap);
         }
         adapter.notifyDataSetChanged();
-    }
-
-    private void addUrlToMap(String url) {
-        Map<String, Object> urlMap = new HashMap<String, Object>();
-        urlMap.put(URL, url);
-        urlMap.put(CHECKED, false);
-        urlsMap.add(urlMap);
     }
 
     private Set<String> loadUrlStringsFromSharedPreferences() {
