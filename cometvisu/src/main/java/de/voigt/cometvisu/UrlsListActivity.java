@@ -9,17 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,15 +24,16 @@ import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
-    private static final String VISU_KEY = "VISU_URLS";
+    private static final String VISU_URL_KEY = "VISU_URLS";
+    private static final String VISU_SELECTED_URL_KEY = "VISU_SELECTED_URL";
     public static final String URL = "url";
     public static final String CHECKED = "checked";
 
     private final Activity activity = this;
 
-    final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
+    private final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
 
-    SimpleAdapter adapter;
+    private SimpleAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +45,14 @@ public class UrlsListActivity extends Activity {
         final Button backButton = (Button) findViewById(R.id.backButton);
 
 
-        Set<String> urls = loadUrlStringsFromSharedPreferences();
-
-        for (String url : urls){
-            addUrlToMap(url);
-        }
-
         adapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,
                 new String[] {URL, CHECKED},
                 new int[] {R.id.urlText, R.id.selectRadioButton});
+
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+        updateLocalUrlMapAndNotifyAdapter(urls);
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -78,28 +72,19 @@ public class UrlsListActivity extends Activity {
                                 String newUrl = input.getText().toString();
                                 addUrlToPreferences(newUrl);
 
-                                //reload(lv);
-                                addUrlToMap(newUrl);
-                                adapter.notifyDataSetChanged();
-
                             }
                         })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do nothing.
-                            }
-                        }).show();
+                        .setNegativeButton("Cancel", null).show();
             }
         });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO: set/load selected URL in main activity
                 finish();
             }
         });
-
-        //reload(lv);
 
         adapter.setViewBinder(new SimpleAdapter.ViewBinder()
         {
@@ -114,8 +99,6 @@ public class UrlsListActivity extends Activity {
                 return false;
             }
 
-//            final ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
-
         });
 
 
@@ -123,20 +106,50 @@ public class UrlsListActivity extends Activity {
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
-                RadioButton rb = (RadioButton) v.findViewById(R.id.selectRadioButton);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RadioButton rb = (RadioButton) view.findViewById(R.id.selectRadioButton);
                 if (!rb.isChecked()) { //OFF->ON
 
                     for (Map<String, Object> m :urlsMap) {//clean previous selected
                         m.put(CHECKED, false);
-                        //TODO: enable delete button
                     }
 
-                    urlsMap.get(arg2).put(CHECKED, true);
+                    urlsMap.get(position).put(CHECKED, true);
                     //TODO: save selection
-                    //TODO: disable delete button
                     adapter.notifyDataSetChanged();
                 }
+            }
+
+        });
+
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                Boolean checked = (Boolean) urlsMap.get(position).get(CHECKED);
+                final String urlToBeRemoved = (String) urlsMap.get(position).get(URL);
+                if(checked){
+                    new AlertDialog.Builder(activity)
+                            .setTitle("Fehler!")
+                            .setMessage("Ein selektierter Eintrag kann nicht gelöscht werden!")
+                            .setNeutralButton("OK", null).show();
+
+                }else{
+                    new AlertDialog.Builder(activity)
+                            .setTitle("Bist du sicher?")
+                            .setMessage("Soll der Eintrag '"+urlToBeRemoved+"' wirklich gelöscht werden?")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    removeUrlFromPreferences(urlToBeRemoved);
+
+                                }
+                            })
+                            .setNegativeButton("Cancel", null).show();
+
+                }
+
+                return true;
             }
         });
 
@@ -162,6 +175,47 @@ public class UrlsListActivity extends Activity {
 */
     }
 
+    private void addUrlToPreferences(String newUrl) {
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+        urls.add(newUrl);
+
+        saveUrlsToPreferences(urls);
+    }
+
+    private void removeUrlFromPreferences(String urlToBeRemoved) {
+        Set<String> urls = loadUrlStringsFromSharedPreferences();
+        urls.remove(urlToBeRemoved);
+
+        saveUrlsToPreferences(urls);
+    }
+
+    private void saveUrlsToPreferences(Set<String> urls) {
+        SharedPreferences sharedPref = getSharedPreferences();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(VISU_URL_KEY);
+        boolean deleted = editor.commit();
+        Log.i("sharedprefs", "deleted key: " + deleted);
+
+        Set<String> urlsEmpty = sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
+        Log.i("sharedprefs", "urls empty? " + urlsEmpty);
+
+        editor.putStringSet(VISU_URL_KEY, urls);
+        Log.i("sharedprefs", "urls to be saved? " + urls);
+        boolean committed = editor.commit();
+        Log.i("sharedprefs", "commit successful? " + committed);
+
+        //set local map
+        updateLocalUrlMapAndNotifyAdapter(urls);
+    }
+
+    private void updateLocalUrlMapAndNotifyAdapter(Set<String> urls) {
+        urlsMap.clear();
+        for (String url : urls){
+            addUrlToMap(url);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     private void addUrlToMap(String url) {
         Map<String, Object> urlMap = new HashMap<String, Object>();
         urlMap.put(URL, url);
@@ -169,46 +223,12 @@ public class UrlsListActivity extends Activity {
         urlsMap.add(urlMap);
     }
 
-    private void addUrlToPreferences(String newUrl) {
-        Set<String> urls = loadUrlStringsFromSharedPreferences();
-        urls.add(newUrl);
-
-        SharedPreferences sharedPref = getSharedPreferences();
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.remove(VISU_KEY);
-        boolean deleted = editor.commit();
-        Log.i("sharedprefs", "deleted key: " + deleted);
-
-        Set<String> urlsEmpty = sharedPref.getStringSet(VISU_KEY, new HashSet<String>());   
-        Log.i("sharedprefs", "urls empty? " + urlsEmpty);
-
-        editor.putStringSet(VISU_KEY, urls);
-        Log.i("sharedprefs", "urls to be saved? " + urls);
-        boolean committed = editor.commit();
-        Log.i("sharedprefs", "commit successful? " + committed);
-
-    }
-
-    private void reload(ListView listView) {
-
-        Set<String> urls = loadUrlStringsFromSharedPreferences();
-
-        List<String> list = Arrays.asList(urls.toArray(new String[urls.size()]));
-
-        ListAdapter adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, list);
-
-        listView.setAdapter(adapter);
-
-    }
-
     private Set<String> loadUrlStringsFromSharedPreferences() {
         SharedPreferences sharedPref = getSharedPreferences();
-
-        return sharedPref.getStringSet(VISU_KEY, new HashSet<String>());
+        return sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
     }
 
     private SharedPreferences getSharedPreferences() {
         return getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
     }
-
 }
