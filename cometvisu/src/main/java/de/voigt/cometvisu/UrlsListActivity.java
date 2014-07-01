@@ -127,22 +127,33 @@ public class UrlsListActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
                 Boolean checked = (Boolean) urlsMap.get(position).get(CHECKED);
-                final String urlToBeRemoved = (String) urlsMap.get(position).get(URL);
+                final String urlToBeEdited = (String) urlsMap.get(position).get(URL);
                 if(checked){
                     new AlertDialog.Builder(activity)
                             .setTitle("Fehler!")
-                            .setMessage("Ein selektierter Eintrag kann nicht gelöscht werden!")
+                            .setMessage("Ein selektierter Eintrag kann nicht gelöscht/geändert werden!")
                             .setNeutralButton("OK", null).show();
 
                 }else{
+
+                    // Set an EditText view to get user input
+                    final EditText input = new EditText(activity);
+                    input.setText(urlToBeEdited);
+
                     new AlertDialog.Builder(activity)
-                            .setTitle("Bist du sicher?")
-                            .setMessage("Soll der Eintrag '"+urlToBeRemoved+"' wirklich gelöscht werden?")
+                            .setTitle("Edit/Delete")
+                            .setView(input)
+                            .setMessage("Eintrag '" + urlToBeEdited + "' löschen/ändern?")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    removeUrlFromPreferences(urlToBeRemoved);
-
+                                    Set<String> urls = loadUrlStringsFromSharedPreferences();
+                                    urls.remove(urlToBeEdited);
+                                    addUrlToPreferences(input.getText().toString());
+                                }
+                            })
+                            .setNeutralButton("Löschen", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    removeUrlFromPreferences(urlToBeEdited);
                                 }
                             })
                             .setNegativeButton("Cancel", null).show();
