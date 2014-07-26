@@ -6,18 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
     private static final String LOADING_MESSAGE = "Lade Seite...";
 
-    private static final String DEFAULT_VISU_URL = "http://wiregate302/visu-svn";
+    private static final String DEFAULT_VISU_URL = "http://wiregate/visu-svn";
 
     private String visuUrl = "";
 
@@ -62,12 +69,43 @@ public class MainActivity extends Activity {
         });
 
         webView = (WebView) findViewById(R.id.webView1);
+        webView.clearCache(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.getSettings().setAppCacheEnabled(false);
+        webView.getSettings().setAppCacheMaxSize(1);
+        getApplicationContext().deleteDatabase("webview.db");
+        getApplicationContext().deleteDatabase("webviewCache.db");
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+                Log.e("MyApplication", message + " -- From line "
+                        + lineNumber + " of "
+                        + sourceID);
+            }
+            public boolean onConsoleMessage(ConsoleMessage cm) {
+                Log.e("MyApplication", cm.message() + " -- From line "
+                        + cm.lineNumber() + " of "
+                        + cm.sourceId() );
+                return true;
+            }
+        });
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (pd.isShowing() && pd != null) {
-                    pd.dismiss();
+                if (pd != null && pd.isShowing()) {
+                    try {
+                        pd.dismiss();
+                    }catch (Throwable t){
+                        // this happens on 4.4.4 in landscape orientation... Log.d("MyApplication", "error while dismissing pd", t);
+                    }
                 }
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                Log.e("MyApplication", description + " -- From line; errorCode: " + errorCode);
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
@@ -87,7 +125,12 @@ public class MainActivity extends Activity {
         if (!visuUrl.equals(currentlySelectedUrl)) {
             visuUrl=currentlySelectedUrl;
             pd.show();
-            webView.loadUrl(visuUrl);
+
+            Map<String, String> noCacheHeaders = new HashMap<String, String>(2);
+            noCacheHeaders.put("Pragma", "no-cache");
+            noCacheHeaders.put("Cache-Control", "no-cache");
+
+            webView.loadUrl(visuUrl, noCacheHeaders);
         }
     }
 
