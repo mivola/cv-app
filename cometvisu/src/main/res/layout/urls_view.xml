@@ -9,9 +9,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
-        android:clickable="true"
-
+        android:clickable="true" />
+<!--
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:paddingTop="10px"
+        android:paddingBottom="10px"
+        android:background="#FF0099CC"
         />
+-->
 
     <LinearLayout
         android:orientation="horizontal"
@@ -19,6 +26,16 @@
         android:layout_height="wrap_content"
         android:gravity="right">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ausrichtung: "/>
+
+        <Spinner
+            android:id="@+id/orientationSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15px"/>
 
         <Button
             android:layout_width="wrap_content"

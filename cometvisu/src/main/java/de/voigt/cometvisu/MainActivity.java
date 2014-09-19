@@ -123,6 +123,7 @@ public class MainActivity extends Activity {
     private void loadSelectedURL() {
         String currentlySelectedUrl= getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getString(UrlsListActivity.VISU_SELECTED_URL_KEY, DEFAULT_VISU_URL);
         if (!visuUrl.equals(currentlySelectedUrl)) {
+            setOrientation();
             visuUrl=currentlySelectedUrl;
             pd.show();
 
@@ -136,21 +137,30 @@ public class MainActivity extends Activity {
 
     private void setOrientation() {
         int orientation;
-        int rotation = ((WindowManager) this.getSystemService(
-                Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                break;
-            case Surface.ROTATION_90:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                break;
-            case Surface.ROTATION_180:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-                break;
-            default:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-                break;
+
+        int selectedOrientation= (int) getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getLong(UrlsListActivity.VISU_ORIENTATION_KEY, 0);
+
+        if (selectedOrientation== UrlsListActivity.Orientation.Portrait.getValue()) {
+            orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }else if (selectedOrientation== UrlsListActivity.Orientation.Landscape.getValue()) {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        }else {
+            int rotation = ((WindowManager) this.getSystemService(
+                    Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                    break;
+                case Surface.ROTATION_90:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+                    break;
+                case Surface.ROTATION_180:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+                    break;
+                default:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+                    break;
+            }
         }
         this.setRequestedOrientation(orientation);
     }

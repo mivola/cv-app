@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,30 @@ import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
+    public enum Orientation {
+        Automagisch(0), Landscape(1), Portrait(2);
+        private int value;
+        private Orientation(int value){
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static String[] names() {
+            Orientation[] values = values();
+            String[] names = new String[values.length];
+
+            for (int i = 0; i < values.length; i++) {
+                names[i] = values[i].name();
+            }
+
+            return names;
+        }
+    }
+
+    static final String VISU_ORIENTATION_KEY = "VISU_ORIENTATION";
     private static final String VISU_URL_KEY = "VISU_URLS";
     static final String VISU_SELECTED_URL_KEY = "VISU_SELECTED_URL";
     public static final String URL = "url";
@@ -33,7 +59,7 @@ public class UrlsListActivity extends Activity {
 
     private final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
 
-    private SimpleAdapter adapter;
+    private SimpleAdapter urlAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +67,11 @@ public class UrlsListActivity extends Activity {
         setContentView(R.layout.urls_view);
 
         final ListView lv = (ListView) findViewById(R.id.urlListView);
+        final Spinner orientationSpinner = (Spinner) findViewById(R.id.orientationSpinner);
         final Button addButton = (Button) findViewById(R.id.addButton);
         final Button backButton = (Button) findViewById(R.id.backButton);
 
-
-        adapter = new SimpleAdapter(activity,
+        urlAdapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,
                 new String[] {URL, CHECKED},
@@ -84,11 +110,38 @@ public class UrlsListActivity extends Activity {
             }
         });
 
-        adapter.setViewBinder(new SimpleAdapter.ViewBinder()
-        {
+        String[] items = Orientation.names();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+        orientationSpinner.setAdapter(adapter);
+        orientationSpinner.setSelection(loadSelectedOrientationFromSharedPreferences());
+        orientationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation)
-            {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // save the selected value
+                SharedPreferences sharedPref = getSharedPreferences();
+                SharedPreferences.Editor editor = sharedPref.edit();
+
+                String selectedOrientation = (String)parent.getItemAtPosition(position);
+                Log.d("sharedprefs", "selectedOrientation: " + selectedOrientation);
+
+                int selectedOrientationId = Orientation.valueOf(selectedOrientation).getValue();
+                Log.d("sharedprefs", "selectedOrientationId: " + selectedOrientationId);
+
+                editor.putLong(VISU_ORIENTATION_KEY, selectedOrientationId);
+                boolean committed = editor.commit();
+                Log.d("sharedprefs", "commit successful? " + committed);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //nothing to do
+                Log.d("orientationSpinner", "nothing selected!");
+            }
+        });
+
+        urlAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
                 if (data == null) { //if 2nd line text is null, its textview should be hidden
                     view.setVisibility(View.GONE);
                     return true;
@@ -100,7 +153,7 @@ public class UrlsListActivity extends Activity {
         });
 
 
-        lv.setAdapter(adapter);
+        lv.setAdapter(urlAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -116,7 +169,7 @@ public class UrlsListActivity extends Activity {
                     editor.commit();
 
                     urlsMap.get(position).put(CHECKED, true);
-                    adapter.notifyDataSetChanged();
+                    urlAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -201,7 +254,7 @@ public class UrlsListActivity extends Activity {
 
     private void updateLocalUrlMapAndNotifyAdapter(Set<String> urls) {
         urlsMap.clear();
-        String selectedUrl = getSharedPreferences().getString(VISU_SELECTED_URL_KEY,"");
+        String selectedUrl = getSharedPreferences().getString(VISU_SELECTED_URL_KEY, "");
         for (String url : urls){
             boolean checked = (selectedUrl!=null && selectedUrl.equals(url) ? true : false);
 
@@ -210,12 +263,29 @@ public class UrlsListActivity extends Activity {
             urlMap.put(CHECKED, checked);
             urlsMap.add(urlMap);
         }
-        adapter.notifyDataSetChanged();
+        urlAdapter.notifyDataSetChanged();
     }
 
     private Set<String> loadUrlStringsFromSharedPreferences() {
         SharedPreferences sharedPref = getSharedPreferences();
-        return sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
+        Set<String> urls = new HashSet<String>();
+        try {
+            urls = sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
+        } catch (Exception e){
+            // might happen if we mis-used the KEY by accident
+        }
+        return urls;
+    }
+
+    private int loadSelectedOrientationFromSharedPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences();
+        int selectedOrientation = 0;
+        try {
+            selectedOrientation= (int)sharedPref.getLong(VISU_ORIENTATION_KEY, 0);
+        } catch (Exception e){
+            // might happen if we mis-used the KEY by accident
+        }
+        return selectedOrientation;
     }
 
     private SharedPreferences getSharedPreferences() {
