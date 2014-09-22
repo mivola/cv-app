@@ -26,29 +26,6 @@ import java.util.Set;
 
 public class UrlsListActivity extends Activity {
 
-    public enum Orientation {
-        Automagisch(0), Landscape(1), Portrait(2);
-        private int value;
-        private Orientation(int value){
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public static String[] names() {
-            Orientation[] values = values();
-            String[] names = new String[values.length];
-
-            for (int i = 0; i < values.length; i++) {
-                names[i] = values[i].name();
-            }
-
-            return names;
-        }
-    }
-
     static final String VISU_ORIENTATION_KEY = "VISU_ORIENTATION";
     private static final String VISU_URL_KEY = "VISU_URLS";
     static final String VISU_SELECTED_URL_KEY = "VISU_SELECTED_URL";

@@ -140,9 +140,9 @@ public class MainActivity extends Activity {
 
         int selectedOrientation= (int) getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getLong(UrlsListActivity.VISU_ORIENTATION_KEY, 0);
 
-        if (selectedOrientation== UrlsListActivity.Orientation.Portrait.getValue()) {
+        if (selectedOrientation== Orientation.Portrait.getValue()) {
             orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-        }else if (selectedOrientation== UrlsListActivity.Orientation.Landscape.getValue()) {
+        }else if (selectedOrientation== Orientation.Landscape.getValue()) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         }else {
             int rotation = ((WindowManager) this.getSystemService(
