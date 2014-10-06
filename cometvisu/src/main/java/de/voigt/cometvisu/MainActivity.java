@@ -144,6 +144,10 @@ public class MainActivity extends Activity {
             orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }else if (selectedOrientation== Orientation.Landscape.getValue()) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        }else if (selectedOrientation== Orientation.ReversePortrait.getValue()) {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        }else if (selectedOrientation== Orientation.ReverseLandscape.getValue()) {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
         }else {
             int rotation = ((WindowManager) this.getSystemService(
                     Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();

@@ -1,7 +1,7 @@
 package de.voigt.cometvisu;
 
 public enum Orientation {
-    Automagisch(0), Landscape(1), Portrait(2);
+    Automagisch(0), Landscape(1), Portrait(2), ReverseLandscape(3), ReversePortrait(4);
     private int value;
     Orientation(int value){
         this.value = value;
