@@ -2,8 +2,10 @@ package de.voigt.cometvisu;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +18,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends Activity {
+
+    static final String APP_NAME = "CV-App";
 
     private static final String LOADING_MESSAGE = "Lade Seite...";
 
@@ -78,12 +83,12 @@ public class MainActivity extends Activity {
 
         webView.setWebChromeClient(new WebChromeClient() {
             public void onConsoleMessage(String message, int lineNumber, String sourceID) {
-                Log.e("MyApplication", message + " -- From line "
+                Log.e(APP_NAME, message + " -- From line "
                         + lineNumber + " of "
                         + sourceID);
             }
             public boolean onConsoleMessage(ConsoleMessage cm) {
-                Log.e("MyApplication", cm.message() + " -- From line "
+                Log.e(APP_NAME, cm.message() + " -- From line "
                         + cm.lineNumber() + " of "
                         + cm.sourceId() );
                 return true;
@@ -105,11 +110,18 @@ public class MainActivity extends Activity {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
-                Log.e("MyApplication", description + " -- From line; errorCode: " + errorCode);
+                Log.e(APP_NAME, description + " -- From line; errorCode: " + errorCode);
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
+
         loadSelectedURL();
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        ScreenReceiver screenReceiver = new ScreenReceiver(webView);
+        registerReceiver(screenReceiver, filter);
+
     }
 
     @Override
@@ -167,6 +179,30 @@ public class MainActivity extends Activity {
             }
         }
         this.setRequestedOrientation(orientation);
+    }
+
+    @Override
+    protected void onPause() {
+        // WHEN THE SCREEN IS ABOUT TO TURN OFF
+        if (ScreenReceiver.wasScreenOn) {
+            // THIS IS THE CASE WHEN ONPAUSE() IS CALLED BY THE SYSTEM DUE TO A SCREEN STATE CHANGE
+            System.out.println("SCREEN TURNED OFF");
+        } else {
+            // THIS IS WHEN ONPAUSE() IS CALLED WHEN THE SCREEN STATE HAS NOT CHANGED
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        // ONLY WHEN SCREEN TURNS ON
+        if (!ScreenReceiver.wasScreenOn) {
+            // THIS IS WHEN ONRESUME() IS CALLED DUE TO A SCREEN STATE CHANGE
+            System.out.println("SCREEN TURNED ON");
+        } else {
+            // THIS IS WHEN ONRESUME() IS CALLED WHEN THE SCREEN STATE HAS NOT CHANGED
+        }
+        super.onResume();
     }
 
 }
