@@ -1,8 +1,9 @@
-.gradle
-/local.properties
-/.idea/workspace.xml
-.DS_Store
-=======
+# IDEA / IntelliJ / Android Studio files
+*.iws
+*.iml
+*.ipr
+.idea
+
 # Built application files
 *.apk
 *.ap_
