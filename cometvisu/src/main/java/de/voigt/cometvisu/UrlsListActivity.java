@@ -256,9 +256,9 @@ public class UrlsListActivity extends Activity {
 
     private int loadSelectedOrientationFromSharedPreferences() {
         SharedPreferences sharedPref = getSharedPreferences();
-        int selectedOrientation = 0;
+        int selectedOrientation = Orientation.Landscape.getValue();
         try {
-            selectedOrientation= (int)sharedPref.getLong(VISU_ORIENTATION_KEY, 0);
+            selectedOrientation= (int)sharedPref.getLong(VISU_ORIENTATION_KEY, Orientation.Landscape.getValue());
         } catch (Exception e){
             // might happen if we mis-used the KEY by accident
         }

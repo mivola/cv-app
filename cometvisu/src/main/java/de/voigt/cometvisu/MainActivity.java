@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -150,7 +151,8 @@ public class MainActivity extends Activity {
     private void setOrientation() {
         int orientation;
 
-        int selectedOrientation= (int) getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getLong(UrlsListActivity.VISU_ORIENTATION_KEY, 0);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
+        int selectedOrientation= (int) prefs.getLong(UrlsListActivity.VISU_ORIENTATION_KEY, Orientation.Landscape.getValue());
 
         if (selectedOrientation== Orientation.Portrait.getValue()) {
             orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
