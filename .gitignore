@@ -5,16 +5,17 @@
 
 # User-specific configurations
 .idea/libraries/
-.idea/workspace.xml
+#.idea/workspace.xml # ! do not add to .gitignore: it contains the "launch configs" and default settings for JUnit tests
 #.idea/tasks.xml
-#.idea/.name
-#.idea/compiler.xml
-#.idea/copyright/profiles_settings.xml
-#.idea/encodings.xml
-#.idea/misc.xml
-#.idea/modules.xml
-#.idea/scopes/scope_settings.xml
-#.idea/vcs.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
 
 # Built application files
 *.apk
