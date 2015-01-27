@@ -102,8 +102,8 @@
       <file leaf-file-name="workspace.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="18666" max-vertical-offset="22678">
-              <caret line="1098" column="21" selection-start-line="1098" selection-start-column="21" selection-end-line="1098" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="18649" max-vertical-offset="22661">
+              <caret line="1097" column="19" selection-start-line="1097" selection-start-column="19" selection-end-line="1097" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -1095,11 +1095,10 @@
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
-    <list size="4">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Android Application.cometvisu" />
       <item index="1" class="java.lang.String" itemvalue="Gradle.cometVisu testDebug" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.MainActivityTest2" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.MainActivityTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.MainActivityTest" />
     </list>
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -1274,8 +1273,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="18666" max-vertical-offset="22678">
-          <caret line="1098" column="21" selection-start-line="1098" selection-start-column="21" selection-end-line="1098" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="18649" max-vertical-offset="22661">
+          <caret line="1097" column="19" selection-start-line="1097" selection-start-column="19" selection-end-line="1097" selection-end-column="19" />
           <folding />
         </state>
       </provider>
