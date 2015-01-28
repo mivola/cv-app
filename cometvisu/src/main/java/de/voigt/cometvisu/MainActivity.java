@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
@@ -88,10 +89,11 @@ public class MainActivity extends Activity {
                         + lineNumber + " of "
                         + sourceID);
             }
+
             public boolean onConsoleMessage(ConsoleMessage cm) {
                 Log.e(APP_NAME, cm.message() + " -- From line "
                         + cm.lineNumber() + " of "
-                        + cm.sourceId() );
+                        + cm.sourceId());
                 return true;
             }
         });
@@ -102,7 +104,7 @@ public class MainActivity extends Activity {
                 if (pd != null && pd.isShowing()) {
                     try {
                         pd.dismiss();
-                    }catch (Throwable t){
+                    } catch (Throwable t) {
                         // this happens on 4.4.4 in landscape orientation... Log.d("MyApplication", "error while dismissing pd", t);
                     }
                 }
@@ -113,6 +115,22 @@ public class MainActivity extends Activity {
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 Log.e(APP_NAME, description + " -- From line; errorCode: " + errorCode);
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String newUrl) {
+                String currentlySelectedUrl = getCurrentlySelectedUrl();
+//                if (Uri.parse(url).getHost().equals(Uri.parse(currentlySelectedUrl).getHost()) &&
+  //                      (Uri.parse(url).getPort() == Uri.parse(currentlySelectedUrl).getPort())) {
+                if(newUrl.startsWith(currentlySelectedUrl)){
+                    // this belongs to the currently selected page
+                    return false;
+                }
+                // let the system handle all other links
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(newUrl));
+                startActivity(intent);
+                return true;
+            }
+
         });
         webView.getSettings().setJavaScriptEnabled(true);
 
@@ -134,10 +152,10 @@ public class MainActivity extends Activity {
     }
 
     private void loadSelectedURL() {
-        String currentlySelectedUrl= getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getString(UrlsListActivity.VISU_SELECTED_URL_KEY, DEFAULT_VISU_URL);
+        String currentlySelectedUrl = getCurrentlySelectedUrl();
         if (!visuUrl.equals(currentlySelectedUrl)) {
             setOrientation();
-            visuUrl=currentlySelectedUrl;
+            visuUrl = currentlySelectedUrl;
             pd.show();
 
             Map<String, String> noCacheHeaders = new HashMap<String, String>(2);
@@ -148,21 +166,25 @@ public class MainActivity extends Activity {
         }
     }
 
+    private String getCurrentlySelectedUrl() {
+        return getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE).getString(UrlsListActivity.VISU_SELECTED_URL_KEY, DEFAULT_VISU_URL);
+    }
+
     private void setOrientation() {
         int orientation;
 
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
-        int selectedOrientation= (int) prefs.getLong(UrlsListActivity.VISU_ORIENTATION_KEY, Orientation.Landscape.getValue());
+        int selectedOrientation = (int) prefs.getLong(UrlsListActivity.VISU_ORIENTATION_KEY, Orientation.Landscape.getValue());
 
-        if (selectedOrientation== Orientation.Portrait.getValue()) {
-            orientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-        }else if (selectedOrientation== Orientation.Landscape.getValue()) {
+        if (selectedOrientation == Orientation.Portrait.getValue()) {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        } else if (selectedOrientation == Orientation.Landscape.getValue()) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-        }else if (selectedOrientation== Orientation.ReversePortrait.getValue()) {
+        } else if (selectedOrientation == Orientation.ReversePortrait.getValue()) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-        }else if (selectedOrientation== Orientation.ReverseLandscape.getValue()) {
+        } else if (selectedOrientation == Orientation.ReverseLandscape.getValue()) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-        }else {
+        } else {
             int rotation = ((WindowManager) this.getSystemService(
                     Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
             switch (rotation) {
