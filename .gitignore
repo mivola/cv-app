@@ -17,10 +17,6 @@
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
 
-# Built application files
-*.apk
-*.ap_
-
 # Files for the Dalvik VM
 *.dex
 
