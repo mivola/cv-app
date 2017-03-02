@@ -10,13 +10,12 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
-import de.voigt.cometvisu.ExtendedShadowWebView;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@Config(emulateSdk=18, manifest="src/main/AndroidManifest.xml",shadows=ExtendedShadowWebView.class)
+@Config(constants = BuildConfig.class)
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
 
