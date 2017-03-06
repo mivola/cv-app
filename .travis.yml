@@ -6,7 +6,7 @@ before_install:
 
 script:
   - ./gradlew build connectedCheck
-  - ./gradlew codeCoverageReport jacocoTestReport
+  - ./gradlew createDebugCoverageReport jacocoTestReport
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
