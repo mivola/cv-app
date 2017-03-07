@@ -2,6 +2,8 @@ package de.voigt.cometvisu;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -16,6 +18,10 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class UrlsListActivity extends Activity {
+public class UrlsListActivity extends BaseActivity {
+
+    private static final String TAG = "UrlsListActivity";
 
     static final String VISU_ORIENTATION_KEY = "VISU_ORIENTATION";
     private static final String VISU_URL_KEY = "VISU_URLS";
@@ -34,7 +42,7 @@ public class UrlsListActivity extends Activity {
 
     private final Activity activity = this;
 
-    private final List<Map<String, Object>> urlsMap = new ArrayList<Map<String, Object>>();
+    private final List<Map<String, Object>> urlsMap = new ArrayList();
 
     private SimpleAdapter urlAdapter;
 
@@ -47,6 +55,8 @@ public class UrlsListActivity extends Activity {
         final Spinner orientationSpinner = (Spinner) findViewById(R.id.orientationSpinner);
         final Button addButton = (Button) findViewById(R.id.addButton);
         final Button backButton = (Button) findViewById(R.id.backButton);
+        final TextView pushNotificationTokenTextView = (TextView) findViewById(R.id.textPushNotificationToken);
+        final Button copy2ClipboardButton = (Button) findViewById(R.id.copy2clipboardButton);
 
         urlAdapter = new SimpleAdapter(activity,
                 urlsMap,
@@ -87,8 +97,14 @@ public class UrlsListActivity extends Activity {
             }
         });
 
+        final String token = FirebaseInstanceId.getInstance().getToken();
+        pushNotificationTokenTextView.setText(token != null ? token.substring(0, 20) + "..." : "Failed to get token");
+        CopyToClipboardClickListener copyToClipboardClickListener = new CopyToClipboardClickListener(token);
+        pushNotificationTokenTextView.setOnClickListener(copyToClipboardClickListener);
+        copy2ClipboardButton.setOnClickListener(copyToClipboardClickListener);
+
         String[] items = Orientation.names();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, items);
         orientationSpinner.setAdapter(adapter);
         orientationSpinner.setSelection(loadSelectedOrientationFromSharedPreferences());
         orientationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -99,14 +115,14 @@ public class UrlsListActivity extends Activity {
                 SharedPreferences.Editor editor = sharedPref.edit();
 
                 String selectedOrientation = (String)parent.getItemAtPosition(position);
-                Log.d("sharedprefs", "selectedOrientation: " + selectedOrientation);
+                Log.d(TAG, "selectedOrientation: " + selectedOrientation);
 
                 int selectedOrientationId = Orientation.valueOf(selectedOrientation).getValue();
-                Log.d("sharedprefs", "selectedOrientationId: " + selectedOrientationId);
+                Log.d(TAG, "selectedOrientationId: " + selectedOrientationId);
 
                 editor.putLong(VISU_ORIENTATION_KEY, selectedOrientationId);
                 boolean committed = editor.commit();
-                Log.d("sharedprefs", "commit successful? " + committed);
+                Log.d(TAG, "commit successful? " + committed);
             }
 
             @Override
@@ -215,15 +231,15 @@ public class UrlsListActivity extends Activity {
         //for some strange reasons, we need to remove the key first; otherwise it wont be saved (after restart of app)
         editor.remove(VISU_URL_KEY);
         boolean deleted = editor.commit();
-        Log.d("sharedprefs", "deleted key: " + deleted);
+        Log.d(TAG, "deleted key: " + deleted);
 
         Set<String> urlsEmpty = sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
-        Log.d("sharedprefs", "urls empty? " + urlsEmpty);
+        Log.d(TAG, "urls empty? " + urlsEmpty);
 
         editor.putStringSet(VISU_URL_KEY, urls);
-        Log.d("sharedprefs", "urls to be saved? " + urls);
+        Log.d(TAG, "urls to be saved? " + urls);
         boolean committed = editor.commit();
-        Log.d("sharedprefs", "commit successful? " + committed);
+        Log.d(TAG, "commit successful? " + committed);
 
         //set local map
         updateLocalUrlMapAndNotifyAdapter(urls);
@@ -235,7 +251,7 @@ public class UrlsListActivity extends Activity {
         for (String url : urls){
             boolean checked = (selectedUrl!=null && selectedUrl.equals(url) ? true : false);
 
-            Map<String, Object> urlMap = new HashMap<String, Object>();
+            Map<String, Object> urlMap = new HashMap();
             urlMap.put(URL, url);
             urlMap.put(CHECKED, checked);
             urlsMap.add(urlMap);
@@ -245,7 +261,7 @@ public class UrlsListActivity extends Activity {
 
     private Set<String> loadUrlStringsFromSharedPreferences() {
         SharedPreferences sharedPref = getSharedPreferences();
-        Set<String> urls = new HashSet<String>();
+        Set<String> urls = new HashSet();
         try {
             urls = sharedPref.getStringSet(VISU_URL_KEY, new HashSet<String>());
         } catch (Exception e){
@@ -267,5 +283,22 @@ public class UrlsListActivity extends Activity {
 
     private SharedPreferences getSharedPreferences() {
         return getApplicationContext().getSharedPreferences(UrlsListActivity.class.getName(), Context.MODE_PRIVATE);
+    }
+
+    private class CopyToClipboardClickListener implements View.OnClickListener {
+        private final String token;
+
+        public CopyToClipboardClickListener(String token) {
+            this.token = token;
+        }
+
+        @Override
+        public void onClick(View v) {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
+            ClipData clip = ClipData.newPlainText("Push Token", token);
+            clipboard.setPrimaryClip(clip);
+            Log.v(TAG, "Push Token: " + token);
+            Toast.makeText(getApplicationContext(), "Push Token in die Zwischenablage kopiert", Toast.LENGTH_SHORT).show();
+        }
     }
 }

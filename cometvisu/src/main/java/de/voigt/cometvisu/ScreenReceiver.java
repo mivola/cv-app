@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 /**
  * Created by mvoigt on 06.10.2014.

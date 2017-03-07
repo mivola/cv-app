@@ -2,7 +2,6 @@ package de.voigt.cometvisu;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,12 +19,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
     static final String APP_NAME = "CV-App";
 
@@ -46,6 +44,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_main);
 
         pd = new ProgressDialog(activity);
@@ -140,7 +139,15 @@ public class MainActivity extends Activity {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         ScreenReceiver screenReceiver = new ScreenReceiver(webView);
         registerReceiver(screenReceiver, filter);
-
+        
+        showDialogIfExists();
+    }
+    
+    private void showDialogIfExists(){
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        intent.putExtras(new Bundle());
+        showDialog(extras);
     }
 
     @Override
@@ -228,5 +235,5 @@ public class MainActivity extends Activity {
         }
         super.onResume();
     }
-
+    
 }
