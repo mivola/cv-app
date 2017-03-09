@@ -5,9 +5,7 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew build connectedCheck
-  - ./gradlew createDebugCoverageReport jacocoTestReport
-  - ./gradlew assemble
+  - ./gradlew build connectedCheck createDebugCoverageReport jacocoTestReport assemble -PversionMicro=${TRAVIS_BUILD_NUMBER}
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
