@@ -8,8 +8,9 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
-        versionCode 2
-        versionName "1.4"
+        versionCode project.versionCode.toInteger()
+        versionName "$versionMajor.$versionMinor.$versionMicro"
+        archivesBaseName = "$applicationName-$versionName"
     }
     buildTypes {
         release {

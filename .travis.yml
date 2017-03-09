@@ -7,6 +7,7 @@ before_install:
 script:
   - ./gradlew build connectedCheck
   - ./gradlew createDebugCoverageReport jacocoTestReport
+  - ./gradlew assemble
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -20,3 +21,14 @@ cache:
     
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: releases
+  api_key: 
+    secure: "41e177e57905e11a20584d858b73aa9e428ff5bd"
+  file: "*/build/outputs/apk/*.apk"
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
