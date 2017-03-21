@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 
     private static final String LOADING_MESSAGE = "Lade Seite...";
 
-    private static final String DEFAULT_VISU_URL = "http://wiregate/visu-svn";
+    private static final String DEFAULT_VISU_URL = "http://wiregate/cometvisu";
 
     private String visuUrl = "";
 
@@ -76,12 +76,19 @@ public class MainActivity extends Activity {
         });
 
         webView = (WebView) findViewById(R.id.webView1);
-        webView.clearCache(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        webView.getSettings().setAppCacheEnabled(false);
-        webView.getSettings().setAppCacheMaxSize(1);
-        getApplicationContext().deleteDatabase("webview.db");
-        getApplicationContext().deleteDatabase("webviewCache.db");
+        
+        //webView.clearCache(true);
+        //webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //webView.getSettings().setAppCacheEnabled(false);
+        //webView.getSettings().setAppCacheMaxSize(1);
+
+        //getApplicationContext().deleteDatabase("webview.db");
+        //getApplicationContext().deleteDatabase("webviewCache.db");
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        //enable support for DOM Storage and Database
+        webView.getSettings().setDatabaseEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
 
         webView.setWebChromeClient(new WebChromeClient() {
             public void onConsoleMessage(String message, int lineNumber, String sourceID) {
@@ -119,8 +126,10 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String newUrl) {
                 String currentlySelectedUrl = getCurrentlySelectedUrl();
-//                if (Uri.parse(url).getHost().equals(Uri.parse(currentlySelectedUrl).getHost()) &&
-  //                      (Uri.parse(url).getPort() == Uri.parse(currentlySelectedUrl).getPort())) {
+
+                newUrl = unifyUrl(newUrl);
+                currentlySelectedUrl = unifyUrl(currentlySelectedUrl);
+                
                 if(newUrl.startsWith(currentlySelectedUrl)){
                     // this belongs to the currently selected page
                     return false;
@@ -130,9 +139,17 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 return true;
             }
+            
+            private String unifyUrl(String url) {
+                url = url.replace("/?", "?");
+                url = url.replaceAll("/+$", "");
+                url = url.replaceAll("^http://", "");
+                url = url.replaceAll("^https://", "");
+                url = url.replaceAll("^www\\.", "");
+                return url;
+            }
 
         });
-        webView.getSettings().setJavaScriptEnabled(true);
 
         loadSelectedURL();
 
