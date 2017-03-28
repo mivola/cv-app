@@ -23,10 +23,11 @@ after_success:
 deploy:
   provider: releases
   api_key: ${GITHUB_API_KEY}
-  file: "*/build/outputs/apk/*.apk"
+  file: "*/build/outputs/apk/*release-unsigned.apk"
   file_glob: true
   overwrite: true
   skip_cleanup: true
+  prerelease: true
   on:
     tags: true
     condition: "$TRAVIS_TAG =~ ^release.*$"
