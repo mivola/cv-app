@@ -1,12 +1,16 @@
 language: android
 jdk: oraclejdk8
 
+android:
+  components:
+    - build-tools-23.0.1
+    - extra-google-google_play_services
+
 before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew build connectedCheck
-  - ./gradlew createDebugCoverageReport jacocoTestReport
+  - ./gradlew build connectedCheck createDebugCoverageReport jacocoTestReport -s
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
