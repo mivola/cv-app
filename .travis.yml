@@ -5,8 +5,7 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew :cometvisu:dep
-  - ./gradlew build connectedCheck -s -d
+  - ./gradlew build connectedCheck
   - ./gradlew createDebugCoverageReport jacocoTestReport
 
 before_cache:
