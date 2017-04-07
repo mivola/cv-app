@@ -31,3 +31,10 @@ deploy:
   on:
     tags: true
     condition: "$TRAVIS_TAG =~ ^release.*$"
+    
+notifications:
+  email:
+    recipients:
+      - mivola@gmx.de
+    on_success: change
+    on_failure: change
