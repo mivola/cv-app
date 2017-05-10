@@ -69,3 +69,16 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     classDirectories = files([debugTree])
     executionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
 }
+
+task copyDebugApk(type: Copy) {
+    from "$projectDir/build/outputs/apk"
+    into "$projectDir/build/outputs/debug"
+    include '*debug.apk'
+    rename { String fileName ->
+        fileName.replace('-debug', '')
+    }
+}
+
+gradle.projectsEvaluated {
+    assembleDebug.finalizedBy copyDebugApk
+}
