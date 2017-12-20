@@ -8,9 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
-        versionCode project.versionCode.toInteger()
-        versionName "$versionMajor.$versionMinor.$versionMicro$versionMicroSuffix-$versionBuildNumber"
-        archivesBaseName = "$applicationName-$versionName"
+        versionCode 2
+        versionName "1.4"
     }
     buildTypes {
         release {
@@ -41,26 +40,25 @@ android {
     }
 }
 
-dependencies {
-    compile 'com.android.support:support-v4:21.+'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    testCompile ("org.robolectric:robolectric:3.2.2")
-    testCompile 'org.hamcrest:hamcrest-integration:1.+'
-    testCompile 'org.hamcrest:hamcrest-core:1.+'
-    testCompile 'org.hamcrest:hamcrest-library:1.+'
+dependencies {
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
 
     testCompile('junit:junit:4.+') {
         exclude module: 'hamcrest-core'
     }
+    testCompile 'org.robolectric:robolectric:3.2.2'
+    testCompile 'org.hamcrest:hamcrest-integration:1.+'
+    testCompile 'org.hamcrest:hamcrest-core:1.+'
+    testCompile 'org.hamcrest:hamcrest-library:1.+'
 }
-
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     reports {
         xml.enabled true
         html.enabled true
     }
-    
+
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
@@ -69,16 +67,4 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     classDirectories = files([debugTree])
     executionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
 }
-
-task copyDebugApk(type: Copy) {
-    from "$projectDir/build/outputs/apk"
-    into "$projectDir/build/outputs/debug"
-    include '*debug.apk'
-    rename { String fileName ->
-        fileName.replace('-debug', '')
-    }
-}
-
-gradle.projectsEvaluated {
-    assembleDebug.finalizedBy copyDebugApk
-}
+apply plugin: 'com.google.gms.google-services'
