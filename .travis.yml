@@ -36,7 +36,7 @@ after_success:
 deploy:
   provider: releases
   api_key: ${GITHUB_API_KEY}
-  file: "*/build/outputs/debug/*.apk"
+  file: "*/build/outputs/apk/*.apk"
   file_glob: true
   overwrite: true
   skip_cleanup: true
