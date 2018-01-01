@@ -8,17 +8,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@Config(constants = BuildConfig.class)
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
-
 
     @Test
     public void createActivity() throws Exception {
@@ -32,7 +29,6 @@ public class MainActivityTest {
         assertThat(webView, notNullValue());
     }
 
-
     @Test
     public void createActivity2() throws Exception {
         Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
@@ -44,7 +40,7 @@ public class MainActivityTest {
     @Test
     public void createActivityWithIntent() throws Exception {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Activity activity = Robolectric.buildActivity(UrlsListActivity.class).withIntent(intent).create().get();
+        Activity activity = Robolectric.buildActivity(UrlsListActivity.class).newIntent(intent).create().get();
         assertThat(activity, notNullValue());
     }
 

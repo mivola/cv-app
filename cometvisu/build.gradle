@@ -11,6 +11,7 @@ android {
         versionCode 2
         versionName "1.4"
     }
+    
     buildTypes {
         release {
             minifyEnabled true
@@ -18,6 +19,12 @@ android {
         }
         debug {
             testCoverageEnabled true
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
         }
     }
 
@@ -40,7 +47,6 @@ android {
     }
 }
 
-
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
@@ -48,11 +54,12 @@ dependencies {
     testCompile('junit:junit:4.+') {
         exclude module: 'hamcrest-core'
     }
-    testCompile 'org.robolectric:robolectric:3.2.2'
+    testCompile 'org.robolectric:robolectric:3.6.1'
     testCompile 'org.hamcrest:hamcrest-integration:1.+'
     testCompile 'org.hamcrest:hamcrest-core:1.+'
     testCompile 'org.hamcrest:hamcrest-library:1.+'
 }
+
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     reports {
         xml.enabled true
@@ -67,4 +74,5 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     classDirectories = files([debugTree])
     executionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
 }
+
 apply plugin: 'com.google.gms.google-services'
