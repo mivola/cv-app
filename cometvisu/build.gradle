@@ -76,4 +76,17 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     executionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
 }
 
+task copyDebugApk(type: Copy) {
+    from "$projectDir/build/outputs/apk/debug/"
+    into "$projectDir/build/outputs/apk/"
+    include '*debug.apk'
+    rename { String fileName ->
+        fileName.replace('-debug', '')
+    }
+}
+
+gradle.projectsEvaluated {
+    assembleDebug.finalizedBy copyDebugApk
+}
+
 apply plugin: 'com.google.gms.google-services'
