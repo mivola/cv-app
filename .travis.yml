@@ -1,11 +1,22 @@
 language: android
 jdk: oraclejdk8
 
+android:
+  components:
+    - build-tools-21.1.2
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+
 before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew build connectedCheck createDebugCoverageReport jacocoTestReport assemble -PversionBuildNumber=${TRAVIS_BUILD_NUMBER}
+  - ./gradlew build connectedCheck createDebugCoverageReport jacocoTestReport assemble -s -PversionBuildNumber=${TRAVIS_BUILD_NUMBER}
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
