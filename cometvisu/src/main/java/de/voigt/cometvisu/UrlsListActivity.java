@@ -57,7 +57,10 @@ public class UrlsListActivity extends BaseActivity {
         final Button backButton = (Button) findViewById(R.id.backButton);
         final TextView pushNotificationTokenTextView = (TextView) findViewById(R.id.textPushNotificationToken);
         final Button copy2ClipboardButton = (Button) findViewById(R.id.copy2clipboardButton);
+        final TextView versionTextView = (TextView) findViewById(R.id.versionTextView);
 
+        versionTextView.setText(BuildConfig.VERSION_NAME);
+        
         urlAdapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,

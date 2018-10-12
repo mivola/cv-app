@@ -10,7 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
-        android:clickable="true" />
+        android:clickable="true"
+        tools:listitem="@android:layout/simple_list_item_single_choice"
+        tools:itemCount="3"
+        tools:layout_height="350dip"
+        />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -45,10 +49,10 @@
             android:id="@+id/textPushNotificationToken"/>
 
         <Button
+            android:id="@+id/copy2clipboardButton"
             android:layout_width="120dip"
             android:layout_height="40dip"
-            android:text="Kopieren"
-            android:id="@+id/copy2clipboardButton"/>
+            android:text="Kopieren"/>
 
     </LinearLayout>
 
@@ -66,7 +70,7 @@
         <Spinner
             android:id="@+id/orientationSpinner"
             android:layout_width="180dip"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginRight="15px"/>
         
         <Button
@@ -75,6 +79,33 @@
             android:text="Zurück"
             android:id="@+id/backButton" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version: "/>
+
+        <TextView
+            android:id="@+id/versionTextView"
+            android:layout_width="188dp"
+            android:layout_height="40dip"
+            android:gravity="right|center_vertical"
+            android:paddingRight="5dip"
+            tools:text="1.0.0-rc1"/>
+
+        <TextView
+            android:layout_width="120dip"
+            android:layout_height="40dp"
+            android:text=""/>
+
+        
     </LinearLayout>
 
 </LinearLayout>
