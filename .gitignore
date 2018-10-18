@@ -5,7 +5,8 @@
 
 # User-specific configurations
 .idea/libraries/
-#.idea/workspace.xml # ! do not add to .gitignore: it contains the "launch configs" and default settings for JUnit tests
+# it contains the "launch configs" and default settings for JUnit tests
+.idea/workspace.xml 
 #.idea/tasks.xml
 .idea/.name
 .idea/compiler.xml
