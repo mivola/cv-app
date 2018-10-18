@@ -9,12 +9,12 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 27
     buildToolsVersion "$buildToolsVersion"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 27
         versionCode project.versionCode.toInteger()
         versionName "$versionMajor.$versionMinor.$versionMicro$versionMicroSuffix-$versionBuildNumber"
         archivesBaseName = "$applicationName-$versionName"
