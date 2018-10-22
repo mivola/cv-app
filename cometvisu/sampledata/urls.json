@@ -1,0 +1,7 @@
+{
+  "urls" :[
+    {"id": 1, "url" : "http://wiregateXYZ/visu.git"},
+    {"id": 2, "url" : "http://wiregateXYZ/visu.git?config=handy"},
+    {"id": 3, "url" : "http://10.11.12.13/visu.git"}
+  ]
+}

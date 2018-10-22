@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
         android:clickable="true"
-        tools:listitem="@android:layout/simple_list_item_single_choice"
+        tools:listitem="@layout/list_single_check"
         tools:itemCount="3"
         tools:layout_height="350dip"
         />
