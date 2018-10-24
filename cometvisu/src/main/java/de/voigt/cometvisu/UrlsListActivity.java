@@ -8,6 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,27 +49,29 @@ public class UrlsListActivity extends BaseActivity {
     private final List<Map<String, Object>> urlsMap = new ArrayList();
 
     private SimpleAdapter urlAdapter;
+    private SingleRecyclerViewAdapter recyclerViewAdapter; 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.urls_view);
 
-        final ListView lv = (ListView) findViewById(R.id.urlListView);
-        final Spinner orientationSpinner = (Spinner) findViewById(R.id.orientationSpinner);
-        final Button addButton = (Button) findViewById(R.id.addButton);
-        final Button backButton = (Button) findViewById(R.id.backButton);
-        final TextView pushNotificationTokenTextView = (TextView) findViewById(R.id.textPushNotificationToken);
-        final Button copy2ClipboardButton = (Button) findViewById(R.id.copy2clipboardButton);
-        final TextView versionTextView = (TextView) findViewById(R.id.versionTextView);
+        final RecyclerView urlsRecycler = findViewById(R.id.urlRecyclerView);
+        final Spinner orientationSpinner = findViewById(R.id.orientationSpinner);
+        final FloatingActionButton addButton = findViewById(R.id.addEntryActionButton);
+        final Button backButton = findViewById(R.id.backButton);
+        final TextView pushNotificationTokenTextView = findViewById(R.id.textPushNotificationToken);
+        final Button copy2ClipboardButton = findViewById(R.id.copy2clipboardButton);
+        final TextView versionTextView = findViewById(R.id.versionTextView);
 
         versionTextView.setText(BuildConfig.VERSION_NAME);
         
+        recyclerViewAdapter = new SingleRecyclerViewAdapter(urlsMap);
         urlAdapter = new SimpleAdapter(activity,
                 urlsMap,
                 R.layout.list_single_check,
                 new String[] {URL, CHECKED},
-                new int[] {R.id.urlText, R.id.selectRadioButton});
+                new int[] {R.id.selectRadioButton, R.id.selectRadioButton});
 
         Set<String> urls = loadUrlStringsFromSharedPreferences();
         updateLocalUrlMapAndNotifyAdapter(urls);
@@ -147,14 +153,12 @@ public class UrlsListActivity extends BaseActivity {
             }
 
         });
-
-
-        lv.setAdapter(urlAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        
+        recyclerViewAdapter.setOnItemClickListener(new SingleRecyclerViewAdapter.SingleClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RadioButton rb = (RadioButton) view.findViewById(R.id.selectRadioButton);
-                if (!rb.isChecked()) { //OFF->ON
+            public void onItemClickListener(int position, View view) {
+                RadioButton radioButton = view.findViewById(R.id.selectRadioButton);
+                if (!radioButton.isChecked()) { //OFF->ON
 
                     for (Map<String, Object> m :urlsMap) {//clean previous selected
                         m.put(CHECKED, false);
@@ -165,12 +169,18 @@ public class UrlsListActivity extends BaseActivity {
                     editor.commit();
 
                     urlsMap.get(position).put(CHECKED, true);
-                    urlAdapter.notifyDataSetChanged();
-                }
+                    recyclerViewAdapter.notifyDataSetChanged();
+                }                
             }
-
         });
-
+        urlsRecycler.setAdapter(recyclerViewAdapter);
+                urlsRecycler.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(this, RecyclerView.VERTICAL);
+        urlsRecycler.addItemDecoration(itemDecoration);
+        urlsRecycler.setLayoutManager(layoutManager);
+/*        
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -212,8 +222,10 @@ public class UrlsListActivity extends BaseActivity {
                 return true;
             }
         });
+        */
     }
 
+        
     private void addUrlToPreferences(String newUrl) {
         Set<String> urls = loadUrlStringsFromSharedPreferences();
         urls.add(newUrl);
@@ -260,6 +272,7 @@ public class UrlsListActivity extends BaseActivity {
             urlsMap.add(urlMap);
         }
         urlAdapter.notifyDataSetChanged();
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 
     private Set<String> loadUrlStringsFromSharedPreferences() {

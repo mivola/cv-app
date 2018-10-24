@@ -56,9 +56,12 @@ android {
 }
 
 dependencies {
-    //implementation 'com.android.support:support-v4:28.0.0'
+    implementation "com.android.support:design:$androidDesignVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support:recyclerview-v7:$recyclerViewVersion"
     implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
+
     testImplementation ("junit:junit:$junitVersion") {
         exclude module: 'hamcrest-core'
     }

@@ -25,7 +25,8 @@
 
         <activity
             android:name=".UrlsListActivity"
-            android:label="URLs">
+            android:label="URLs"
+            android:theme="@style/AppTheme">
         </activity>
 
         <service
