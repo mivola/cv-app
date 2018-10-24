@@ -17,7 +17,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="?android:attr/colorButtonNormal"
+        android:background="#5a595b"
         app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,20 +31,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
         android:paddingRight="8dip"
         android:text="Push Notification Token: "
-        app:layout_constraintBottom_toTopOf="@+id/textView7"
-        tools:layout_editor_absoluteX="24dp"/>
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/textPushNotificationToken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:paddingLeft="5dip"
-        app:layout_constraintBottom_toTopOf="@+id/versionTextView"
+        app:layout_constraintBottom_toTopOf="@+id/orientationSpinner"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
         tools:text="abcdefghi..."/>
 
 
@@ -53,26 +57,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
+        android:layout_marginStart="16dp"
         android:text="Ausrichtung: "
         app:layout_constraintBottom_toBottomOf="@+id/copy2clipboardButton"
-        tools:layout_editor_absoluteX="24dp"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <Spinner
         android:id="@+id/orientationSpinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/backButton"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Zurück"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_height="31dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/versionTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/support_simple_spinner_dropdown_item"/>
 
 
     <TextView
@@ -80,19 +78,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Version: "
-        app:layout_constraintBottom_toTopOf="@+id/textView6"
-        tools:layout_editor_absoluteX="24dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/versionTextView"/>
 
     <TextView
         android:id="@+id/versionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:gravity="right|center_vertical"
         android:paddingRight="5dip"
-        app:layout_constraintBottom_toTopOf="@+id/orientationSpinner"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="1.0.0-rc1"/>
 
@@ -106,9 +105,10 @@
         android:id="@+id/copy2clipboardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:text="Kopieren"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addEntryActionButton"

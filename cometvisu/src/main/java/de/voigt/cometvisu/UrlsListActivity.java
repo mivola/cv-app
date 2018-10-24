@@ -59,7 +59,6 @@ public class UrlsListActivity extends BaseActivity {
         final RecyclerView urlsRecycler = findViewById(R.id.urlRecyclerView);
         final Spinner orientationSpinner = findViewById(R.id.orientationSpinner);
         final FloatingActionButton addButton = findViewById(R.id.addEntryActionButton);
-        final Button backButton = findViewById(R.id.backButton);
         final TextView pushNotificationTokenTextView = findViewById(R.id.textPushNotificationToken);
         final Button copy2ClipboardButton = findViewById(R.id.copy2clipboardButton);
         final TextView versionTextView = findViewById(R.id.versionTextView);
@@ -96,13 +95,6 @@ public class UrlsListActivity extends BaseActivity {
                             }
                         })
                         .setNegativeButton("Cancel", null).show();
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 
