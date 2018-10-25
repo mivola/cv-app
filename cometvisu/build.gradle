@@ -59,6 +59,7 @@ dependencies {
     implementation "com.android.support:design:$androidDesignVersion"
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
     implementation "com.android.support:recyclerview-v7:$recyclerViewVersion"
+    implementation "com.daimajia.swipelayout:library:$diamajiaSwipeLayoutVersion"
     implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
 

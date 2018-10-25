@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.util.Attributes;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
@@ -48,7 +51,6 @@ public class UrlsListActivity extends BaseActivity {
 
     private final List<Map<String, Object>> urlsMap = new ArrayList();
 
-    private SimpleAdapter urlAdapter;
     private SingleRecyclerViewAdapter recyclerViewAdapter; 
 
     @Override
@@ -66,11 +68,7 @@ public class UrlsListActivity extends BaseActivity {
         versionTextView.setText(BuildConfig.VERSION_NAME);
         
         recyclerViewAdapter = new SingleRecyclerViewAdapter(urlsMap);
-        urlAdapter = new SimpleAdapter(activity,
-                urlsMap,
-                R.layout.list_single_check,
-                new String[] {URL, CHECKED},
-                new int[] {R.id.selectRadioButton, R.id.selectRadioButton});
+        recyclerViewAdapter.setMode(Attributes.Mode.Single);
 
         Set<String> urls = loadUrlStringsFromSharedPreferences();
         updateLocalUrlMapAndNotifyAdapter(urls);
@@ -133,19 +131,6 @@ public class UrlsListActivity extends BaseActivity {
             }
         });
 
-        urlAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if (data == null) { //if 2nd line text is null, its textview should be hidden
-                    view.setVisibility(View.GONE);
-                    return true;
-                }
-                view.setVisibility(View.VISIBLE);
-                return false;
-            }
-
-        });
-        
         recyclerViewAdapter.setOnItemClickListener(new SingleRecyclerViewAdapter.SingleClickListener() {
             @Override
             public void onItemClickListener(int position, View view) {
@@ -172,6 +157,8 @@ public class UrlsListActivity extends BaseActivity {
                 new DividerItemDecoration(this, RecyclerView.VERTICAL);
         urlsRecycler.addItemDecoration(itemDecoration);
         urlsRecycler.setLayoutManager(layoutManager);
+        
+        
 /*        
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -263,7 +250,6 @@ public class UrlsListActivity extends BaseActivity {
             urlMap.put(CHECKED, checked);
             urlsMap.add(urlMap);
         }
-        urlAdapter.notifyDataSetChanged();
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
